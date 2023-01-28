@@ -8,14 +8,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.tvshow.ui.DetailScreen
 import com.example.tvshow.ui.MainViewModel
 import com.example.tvshow.ui.SearchScreen
 import com.example.tvshow.ui.theme.TVShowTheme
 import com.example.tvshow.util.Screen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +38,19 @@ class MainActivity : ComponentActivity() {
                         startDestination = Screen.SearchScreen.route
                     ) {
                         composable(Screen.SearchScreen.route) {
-                            SearchScreen(viewModel)
+                            SearchScreen(viewModel, navController)
+                        }
+                        composable(
+                            Screen.DetailScreen.route,
+                            arguments = listOf(navArgument("id") { type = NavType.StringType })
+                        ) {
+                            it.arguments?.getString("id")?.let { id ->
+                                DetailScreen(
+                                    viewModel = viewModel,
+                                    navController = navController,
+                                    id = id
+                                )
+                            }
                         }
                     }
                 }

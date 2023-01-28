@@ -1,5 +1,8 @@
 package com.example.tvshow.ui
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tvshow.model.SearchResponse
@@ -18,11 +21,14 @@ class MainViewModel @Inject constructor(private val repository: Repository) : Vi
         Resource.Success(SearchResponse())
     )
     val searchResponse: StateFlow<Resource<SearchResponse>> = _searchResponse
+    var shouldShowGrid by mutableStateOf(false)
+        private set
 
     fun searchTVShow(searchTerm: String) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.searchTVShow(searchTerm).collect {
                 _searchResponse.value = it
+                shouldShowGrid = !it.data.isNullOrEmpty()
             }
         }
     }

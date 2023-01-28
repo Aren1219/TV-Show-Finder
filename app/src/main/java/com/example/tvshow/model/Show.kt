@@ -17,7 +17,7 @@ data class Show(
     @SerializedName("id")
     val id: Int,
     @SerializedName("image")
-    val image: Image,
+    val image: Image?,
     @SerializedName("language")
     val language: String,
     @SerializedName("_links")

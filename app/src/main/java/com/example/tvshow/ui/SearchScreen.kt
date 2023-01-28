@@ -92,7 +92,6 @@ private fun TVShowGrid(
         modifier = modifier.fillMaxSize(),
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(6.dp),
-        verticalArrangement = Arrangement.SpaceEvenly
     ) {
         items(items = tvShows) { item ->
             TVShowGridItem(item) { onItemClick(item) }

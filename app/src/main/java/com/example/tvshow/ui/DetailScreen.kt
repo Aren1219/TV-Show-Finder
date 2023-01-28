@@ -32,12 +32,12 @@ fun DetailScreen(
 ) {
     val tVShow = viewModel.searchResponse.collectAsState().value.data?.find {
         it.show.id == id.toInt()
-    }
+    }?.show
     if (tVShow != null)
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = tVShow.show.name) },
+                    title = { Text(text = tVShow.name) },
                     navigationIcon = {
                         IconButton(onClick = { navController.navigateUp() }) {
                             Icon(Icons.Default.ArrowBack, contentDescription = "")
@@ -47,7 +47,7 @@ fun DetailScreen(
             }
         ) {
             Surface(modifier = Modifier.fillMaxSize()) {
-                TVDetailContent(modifier = Modifier.padding(it), tVShow.show)
+                TVDetailContent(modifier = Modifier.padding(it), tVShow)
             }
         }
 }

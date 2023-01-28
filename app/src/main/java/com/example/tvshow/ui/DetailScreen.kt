@@ -15,6 +15,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
@@ -59,6 +61,7 @@ private fun TVDetailContent(modifier: Modifier = Modifier, show: Show) {
             .verticalScroll(rememberScrollState())
     ) {
         OverView(show)
+        Divider(modifier = Modifier.padding(vertical = 12.dp))
         Summary(show)
     }
 }
@@ -72,13 +75,14 @@ private fun OverView(show: Show) {
             else R.drawable.placeholder_image,
             contentDescription = "",
             contentScale = ContentScale.FillWidth,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(2f)
         )
         Column(
             modifier = Modifier
-                .weight(2f)
-                .padding(start = 6.dp)
+                .weight(3f)
+                .padding(start = 12.dp)
         ) {
+            OverviewItem("type", show.type)
             if (show.genres.isNotEmpty())
                 OverviewItem("genre", show.genres.toString().drop(1).dropLast(1))
             OverviewItem("rating", show.rating.average.toString())
@@ -87,6 +91,7 @@ private fun OverView(show: Show) {
             OverviewItem("status", show.status)
             OverviewItem("average runtime", show.averageRuntime.toString())
             OverviewItem("language", show.language)
+            OverviewItem("network", show.network?.name)
             OverviewItem("official site", show.officialSite, true)
         }
     }
@@ -98,13 +103,22 @@ private fun OverviewItem(string: String, string2: String, isLink: Boolean = fals
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(text = "$string: ")
             if (!isLink)
-                Text(text = string2, color = Color.Gray)
+                Text(
+                    text = string2,
+                    color = Color.Gray,
+                    textAlign = TextAlign.End,
+                )
             else {
                 val uriHandler = LocalUriHandler.current
                 ClickableText(
                     text = AnnotatedString(string2),
                     onClick = { uriHandler.openUri(string2) },
-                    style = TextStyle.Default.copy(MaterialTheme.colorScheme.primary)
+                    style = TextStyle.Default.copy(
+                        MaterialTheme.colorScheme.primary,
+                        textAlign = TextAlign.End
+                    ),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -114,7 +128,7 @@ private fun OverviewItem(string: String, string2: String, isLink: Boolean = fals
 private fun Summary(show: Show) {
     if (show.summary != null)
         Text(
-            text = "summary: " + show.summary
+            text = "summary: \n" + show.summary
                 .replace("<p>", "\n")
                 .replace("</p>", "")
                 .replace("<b>", "")

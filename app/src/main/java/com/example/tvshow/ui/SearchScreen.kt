@@ -30,7 +30,6 @@ import com.example.tvshow.util.Screen
 @Composable
 fun SearchScreen(viewModel: MainViewModel, navController: NavHostController) {
     val uiState = viewModel.searchResponse.collectAsState().value
-    var searchTerm by remember { mutableStateOf("") }
     val shouldShowGrid = viewModel.shouldShowGrid
     val focusManager = LocalFocusManager.current
     when (uiState) {
@@ -49,13 +48,13 @@ fun SearchScreen(viewModel: MainViewModel, navController: NavHostController) {
                             top = if (shouldShowGrid) 12.dp else 0.dp,
                             end = 12.dp
                         ),
-                    value = searchTerm,
-                    onValueChange = { searchTerm = it },
+                    value = viewModel.searchTerm,
+                    onValueChange = { viewModel.searchTerm = it },
                     placeholder = { Text(text = "Search", color = Color.Gray) },
                     trailingIcon = {
                         IconButton(onClick = {
                             focusManager.clearFocus()
-                            viewModel.searchTVShow(searchTerm)
+                            viewModel.searchTVShow()
                         }) {
                             Icon(imageVector = Icons.Default.Search, contentDescription = "")
                         }
@@ -63,17 +62,16 @@ fun SearchScreen(viewModel: MainViewModel, navController: NavHostController) {
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = {
                         focusManager.clearFocus()
-                        viewModel.searchTVShow(searchTerm)
+                        viewModel.searchTVShow()
                     })
                 )
                 if (shouldShowGrid)
                     uiState.data?.let {
                         TVShowGrid(tvShows = it) { item ->
-                            navController.navigate(Screen.DetailScreen.path + item.show.id)
+                            navController.navigate(Screen.DetailScreen.base + item.show.id)
                         }
                     }
             }
-
         }
         is Resource.Error -> {}
         is Resource.Loading -> {

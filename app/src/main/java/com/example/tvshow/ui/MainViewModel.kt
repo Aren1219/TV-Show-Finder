@@ -24,7 +24,9 @@ class MainViewModel @Inject constructor(private val repository: Repository) : Vi
     var shouldShowGrid by mutableStateOf(false)
         private set
 
-    fun searchTVShow(searchTerm: String) {
+    var searchTerm by mutableStateOf("")
+
+    fun searchTVShow() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.searchTVShow(searchTerm).collect {
                 _searchResponse.value = it

@@ -82,17 +82,17 @@ private fun OverView(show: Show) {
                 .weight(3f)
                 .padding(start = 12.dp)
         ) {
-            OverviewItem("type", show.type)
+            OverviewItem("Type", show.type)
             if (show.genres.isNotEmpty())
-                OverviewItem("genre", show.genres.toString().drop(1).dropLast(1))
-            OverviewItem("rating", show.rating.average.toString())
-            OverviewItem("premiered", show.premiered)
-            OverviewItem("ended", show.ended)
-            OverviewItem("status", show.status)
-            OverviewItem("average runtime", show.averageRuntime.toString())
-            OverviewItem("language", show.language)
-            OverviewItem("network", show.network?.name)
-            OverviewItem("official site", show.officialSite, true)
+                OverviewItem("Genre", show.genres.toString().drop(1).dropLast(1))
+            OverviewItem("Rating", show.rating.average.toString())
+            OverviewItem("Premiered", show.premiered)
+            OverviewItem("Ended", show.ended)
+            OverviewItem("Status", show.status)
+            OverviewItem("Average runtime", show.averageRuntime.toString())
+            OverviewItem("Language", show.language)
+            OverviewItem("Network", show.network?.name)
+            OverviewItem("Official site", show.officialSite, true)
         }
     }
 }
@@ -128,7 +128,7 @@ private fun OverviewItem(string: String, string2: String, isLink: Boolean = fals
 private fun Summary(show: Show) {
     if (show.summary != null)
         Text(
-            text = "summary: \n" + show.summary
+            text = "Summary: \n" + show.summary
                 .replace("<p>", "\n")
                 .replace("</p>", "")
                 .replace("<b>", "")

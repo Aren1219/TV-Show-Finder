@@ -15,16 +15,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.datastore.dataStore
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.tvshow.R
+import com.example.tvshow.datastore.StoreSearchTerm
 import com.example.tvshow.model.SearchResponse
 import com.example.tvshow.model.SearchResponseItem
 import com.example.tvshow.util.Resource
 import com.example.tvshow.util.Screen
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,6 +36,19 @@ fun SearchScreen(viewModel: MainViewModel, navController: NavHostController) {
     val uiState = viewModel.searchResponse.collectAsState().value
     val shouldShowGrid = viewModel.shouldShowGrid
     val focusManager = LocalFocusManager.current
+
+//    var shouldShowHistory by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val dataStore = StoreSearchTerm(context)
+    val history = dataStore.getSearchTerm.collectAsState(initial = "").value
+
+    fun searchTVShow() {
+        focusManager.clearFocus()
+        viewModel.searchTVShow()
+        scope.launch { dataStore.saveSearchTerm(viewModel.searchTerm) }
+    }
+
     when (uiState) {
         is Resource.Success -> {
             Column(
@@ -53,18 +70,24 @@ fun SearchScreen(viewModel: MainViewModel, navController: NavHostController) {
                     placeholder = { Text(text = "Search", color = Color.Gray) },
                     trailingIcon = {
                         IconButton(onClick = {
-                            focusManager.clearFocus()
-                            viewModel.searchTVShow()
+                            searchTVShow()
                         }) {
                             Icon(imageVector = Icons.Default.Search, contentDescription = "")
                         }
                     },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = {
-                        focusManager.clearFocus()
-                        viewModel.searchTVShow()
+                        searchTVShow()
                     })
                 )
+                if (!history.isNullOrEmpty())
+                    Text(
+                        text = "Last search query: $history",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp)
+                            .clickable { viewModel.searchTerm = history }
+                    )
                 if (shouldShowGrid)
                     uiState.data?.let {
                         TVShowGrid(tvShows = it) { item ->

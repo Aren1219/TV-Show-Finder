@@ -1,4 +1,4 @@
-package com.example.tvshow
+package com.example.tvshow.di
 
 import com.example.tvshow.remote.Api
 import com.example.tvshow.remote.ApiReferences.BASE_URL
